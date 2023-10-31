@@ -212,3 +212,44 @@ new MenuItem(
     12,
     '.menu .container'
     ).buildMenu();
+
+    // Forms
+    const forms = document.querySelectorAll('form'),
+        messages = {loading: 'Loading...',
+                    success: 'Successfully send! We will contact you soon.',
+                    failure: 'Something went wrong.'};
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = messages.loading;
+            form.append(statusMessage);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            const data = new FormData(form);
+
+            request.send(data);
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    statusMessage.textContent = messages.success;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMessage.remove();
+                    }, 2000);
+                } else {
+                    statusMessage.textContent = messages.failure;
+                }
+            });
+        });
+    }
