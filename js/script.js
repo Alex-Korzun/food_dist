@@ -233,22 +233,30 @@ window.addEventListener('DOMContentLoaded', () => {
             `;
             form.insertAdjacentElement('afterend', loadingSpinner);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
+            const formData = new FormData(form);
 
-            const data = new FormData(form);
-
-            request.send(data);
-
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    showSuccessModal(messages.success);
-                    form.reset();
-                    loadingSpinner.remove();
-                } else {
-                    showSuccessModal(messages.failure);
-                }
+            const object = {};
+            formData.forEach((key, value) => {
+                object[key] = value;
             });
+
+            fetch('server.php', {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/JSON'
+                },
+                body: JSON.stringify(object)
+            })
+            .then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showSuccessModal(messages.success);
+                loadingSpinner.remove();
+            }).catch(() => {
+                showSuccessModal(messages.failure);
+            }).finally(() => {
+                form.reset();
+            })
         });
     }
 
