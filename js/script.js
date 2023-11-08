@@ -284,40 +284,56 @@ window.addEventListener('DOMContentLoaded', () => {
         sliderPrevBtn = slider.querySelector('.offer__slider-prev'),
         sliderNextBtn = slider.querySelector('.offer__slider-next'),
         totalSlides = slider.querySelector('#total'),
-        currentSlide = slider.querySelector('#current');
+        currentSlide = slider.querySelector('#current'),
+        sliderWrapper = slider.querySelector('.offer__slider-wrapper'),
+        sliderField = slider.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(sliderWrapper).width;
 
-    let currentSlideIndex = 1;
-        
+    let currentSlideIndex = 1,
+        offset = 0;
+
     totalSlides.innerHTML = images.length < 10 ? `0${images.length}` : images.length;
-    showCurrentSlide(currentSlideIndex);
+    currentSlide.innerHTML = currentSlideIndex < 10 ? `0${currentSlideIndex}` : currentSlideIndex;
 
-    function showCurrentSlide(index) {
-        images.forEach(image => {
-            image.classList.remove('show', 'fade');
-            image.classList.add('hide');
-        });
-        images[index - 1].classList.remove('hide');
-        images[index - 1].classList.add('show', 'fade');
-        currentSlide.innerHTML = index < 10 ? `0${currentSlideIndex}` : currentSlideIndex;
-    }
+    sliderField.style.width = 100 * images.length + '%';
+    sliderField.style.display = 'flex';
+    sliderField.style.transition = '0.5s all';
 
-    sliderPrevBtn.addEventListener('click', () => {
-        if (currentSlideIndex === 1) {
-            currentSlideIndex = images.length;
-            showCurrentSlide(currentSlideIndex);
-        } else {
-            currentSlideIndex--;
-            showCurrentSlide(currentSlideIndex);
-        }
+    sliderWrapper.style.overflow = 'hidden';
+
+    images.forEach(image => {
+        image.style.width = width;
     });
 
     sliderNextBtn.addEventListener('click', () => {
+        if (offset == +width.slice(0, width.length - 2) * (images.length - 1)) {
+            offset = 0;
+        } else {
+            offset += +width.slice(0, width.length - 2);
+        }
+        sliderField.style.transform = `translateX(-${offset}px)`;
+
         if (currentSlideIndex === images.length) {
             currentSlideIndex = 1;
-            showCurrentSlide(currentSlideIndex);
         } else {
             currentSlideIndex++;
-            showCurrentSlide(currentSlideIndex);
         }
-    })
+        currentSlide.innerHTML = currentSlideIndex < 10 ? `0${currentSlideIndex}` : currentSlideIndex;
+    });
+
+    sliderPrevBtn.addEventListener('click', () => {
+        if (offset == 0) {
+            offset = +width.slice(0, width.length - 2) * (images.length - 1);
+        } else {
+            offset -= +width.slice(0, width.length - 2);
+        }
+        sliderField.style.transform = `translateX(-${offset}px)`;
+
+        if (currentSlideIndex === 1) {
+            currentSlideIndex = images.length;
+        } else {
+            currentSlideIndex--;
+        }
+        currentSlide.innerHTML = currentSlideIndex < 10 ? `0${currentSlideIndex}` : currentSlideIndex;
+    });
 });
