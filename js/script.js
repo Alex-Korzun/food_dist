@@ -351,10 +351,10 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     sliderNextBtn.addEventListener('click', () => {
-        if (offset == +width.slice(0, width.length - 2) * (images.length - 1)) {
+        if (offset == turnToDigitAndReplace(width) * (images.length - 1)) {
             offset = 0;
         } else {
-            offset += +width.slice(0, width.length - 2);
+            offset += turnToDigitAndReplace(width);
         }
         switchOffset(sliderField, offset);
 
@@ -369,9 +369,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
     sliderPrevBtn.addEventListener('click', () => {
         if (offset == 0) {
-            offset = +width.slice(0, width.length - 2) * (images.length - 1);
+            offset = turnToDigitAndReplace(width) * (images.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= turnToDigitAndReplace(width);
         }
         switchOffset(sliderField, offset);
 
@@ -389,7 +389,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const slideTo = +e.target.getAttribute('data-slide-to');
 
             currentSlideIndex = slideTo;
-            offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+            offset = turnToDigitAndReplace(width) * (slideTo - 1);
 
             switchOffset(sliderField, offset);
             addZeroToNumber(currentSlide, currentSlideIndex);
@@ -408,5 +408,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function switchOffset(sliderField, offset) {
         sliderField.style.transform = `translateX(-${offset}px)`;
+    }
+
+    function turnToDigitAndReplace(str) {
+        return +str.replace(/\D/g, '');
     }
 });
