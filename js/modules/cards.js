@@ -1,3 +1,5 @@
+import { getMenuInfo } from "../services/services";
+
 function cards() {
     // Classes
     class MenuItem {
@@ -40,16 +42,6 @@ function cards() {
             this.itemTotal *= this.transfer;
         }
     }
-
-    const getMenuInfo = async (url) => {
-        const res = await fetch(url);
-
-        if (!res.ok) {
-            throw new Error(`Couldn't fetch ${url}, status: $${res.status}`);
-        }
-
-        return await res.json();
-    };
 
     getMenuInfo('http://localhost:3000/menu')
         .then(data => {
